@@ -14,7 +14,7 @@ project.blueprint.md          [capabilities/blueprint-generator]   ← 아키텍
     ↓
 artifact.plan.md              [capabilities/artifact-planner]      ← 생성할 산출물과 순서 결정
     ↓
-계획된 문서들                  [capabilities/document-generator]    ← 예정 (roles/templates 재료는 준비됨)
+계획된 산출물들                [capabilities/artifact-generator]    ← plan 실행 오케스트레이션 (생성은 개별 생성기에 위임)
     ↓
 AI-specific Prompt            [prompt-generator]                   ← 예정 (adapters/ai 사용)
 ```
@@ -31,7 +31,7 @@ AI-specific Prompt            [prompt-generator]                   ← 예정 (a
    - 이미 존재하면 다시 만들지 않고 그대로 사용한다. 단, intake.md가 크게 바뀌었다면 갱신을 제안한다.
 4. **Artifact Plan을 생성한다.** `capabilities/artifact-planner/capability.md`의 지침에 따라 project.blueprint.md를 `artifact.plan.md`(프로젝트 루트)로 변환한다. 이 문서가 어떤 산출물을 어떤 순서로 만들지 정하는 실행 계획이다.
    - blueprint와 마찬가지로 이미 존재하면 재사용하고, blueprint가 크게 바뀌었다면 갱신을 제안한다.
-5. 하위 문서는 **artifact.plan.md에 계획된 것만**, **intake.md가 아니라 `project.blueprint.md`에서 파생**시켜 생성한다. intake.md는 blueprint에 없는 세부 정보를 보충할 때만 참조한다. 표준 4종 문서는 아래 매핑을 기본으로 하고, plan에만 있는 문서(예: architecture.md, roadmap.md)는 blueprint를 근거로 생성한다:
+5. **Artifact Plan을 실행한다.** `capabilities/artifact-generator/capability.md`의 지침에 따라 계획된 산출물을 의존 순서대로, 각 산출물의 담당 생성기에 위임해 생성한다. 하위 문서는 **artifact.plan.md에 계획된 것만**, **intake.md가 아니라 `project.blueprint.md`에서 파생**시킨다. intake.md는 blueprint에 없는 세부 정보를 보충할 때만 참조한다. 표준 4종 문서는 document-generator의 아래 매핑을 기본으로 하고, plan에만 있는 문서(예: architecture.md, roadmap.md)는 blueprint를 근거로 생성한다:
 
    | 생성 문서 | 역할 프롬프트 | 구조 템플릿 |
    |---|---|---|

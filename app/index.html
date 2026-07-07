@@ -429,9 +429,9 @@ textarea {
 
 <header class="header">
   <div class="logo">Project Starter <span>by WOWAIST</span></div>
-  <div class="step-indicator" id="stepIndicator">1 / 9</div>
+  <div class="step-indicator" id="stepIndicator">1 / 10</div>
   <div class="progress-bar-wrap">
-    <div class="progress-bar" id="progressBar" style="width: 11.1%"></div>
+    <div class="progress-bar" id="progressBar" style="width: 10%"></div>
   </div>
 </header>
 
@@ -879,7 +879,29 @@ textarea {
         1. 위 버튼으로 프롬프트를 복사해 AI 도구에 요청하세요. (Step 8의 blueprint 수정본이 함께 복사됩니다)<br>
         2. AI가 생성한 계획을 <b>원본</b>에 붙여넣고, <b>수정본</b>에서 산출물을 더하거나 덜어내세요.<br>
         3. 수정본을 복사해 프로젝트 루트에 <code style="background:#e5e4e0;padding:2px 5px;border-radius:4px;font-size:12px">artifact.plan.md</code>로 저장하세요.<br>
-        4. 다음 단계(계획에 따른 문서 생성)는 artifact.plan.md 확정 후 진행합니다.
+        4. artifact.plan.md가 확정되면 <b>다음 단계</b>에서 계획을 실행합니다.
+      </p>
+    </div>
+  </div>
+
+  <!-- STEP 10: 산출물 생성 (artifact.plan.md 실행) -->
+  <div class="step" id="step10">
+    <span class="step-tag">Step 10 — 산출물 생성</span>
+    <h1 class="step-title">계획을 실행해요 📦</h1>
+    <p class="step-desc">확정된 artifact.plan.md를 AI가 실행합니다. 계획된 산출물이 의존 순서대로 생성되며, 계획에 없는 것은 만들지 않습니다.</p>
+
+    <div class="complete-action" style="margin:0 0 20px">
+      <button class="btn-action primary" onclick="copyGeneratePrompt(event)">
+        📦 산출물 생성 프롬프트 복사 (blueprint + plan 포함)
+      </button>
+    </div>
+
+    <div style="margin-top:8px;padding:16px;background:#f0efeb;border-radius:var(--radius-sm)">
+      <p style="font-size:13px;font-weight:600;margin-bottom:8px">진행 방법</p>
+      <p style="font-size:13px;color:var(--text-sub);line-height:1.7">
+        1. 위 버튼으로 프롬프트를 복사해 AI 도구에 요청하세요. (Step 8~9의 blueprint와 plan 수정본이 함께 복사됩니다)<br>
+        2. <b>프로젝트 레포 안에서</b> Claude Code 같은 코딩 AI로 실행하면 산출물 파일이 바로 생성됩니다. 웹 챗에서 실행했다면 결과를 각 파일로 저장하세요.<br>
+        3. 실행이 끝나면 AI가 생성/건너뜀/실패 내역을 담은 <b>실행 요약</b>을 보고합니다. 생성된 문서를 팀과 함께 검토하세요.
       </p>
     </div>
   </div>
@@ -894,7 +916,7 @@ textarea {
 </nav>
 
 <script>
-const TOTAL = 9;
+const TOTAL = 10;
 let current = 1;
 const store = {};
 let intakeDirty = false;  // 사용자가 intake 수정본을 직접 편집했는지
@@ -951,6 +973,9 @@ function updateUI() {
     next.style.display = '';
   } else if (current === 8) {
     next.textContent = '생성할 문서 결정하기 →';
+    next.style.display = '';
+  } else if (current === 9) {
+    next.textContent = '계획 실행하기 →';
     next.style.display = '';
   } else {
     next.textContent = '다음 단계 →';
@@ -1135,6 +1160,27 @@ function copyArtifactPlan(event) {
     return;
   }
   copyWithFeedback(content, event.target, '🗂️ artifact.plan.md 복사 (수정본)');
+}
+
+function copyGeneratePrompt(event) {
+  const bp = bpPair.final();
+  const plan = apPair.final();
+  if (!bp || !plan) {
+    const btn = event.target;
+    btn.textContent = !plan ? '먼저 Step 9에서 artifact.plan.md를 준비해주세요' : '먼저 Step 8에서 blueprint를 준비해주세요';
+    setTimeout(() => btn.textContent = '📦 산출물 생성 프롬프트 복사 (blueprint + plan 포함)', 2500);
+    return;
+  }
+  const prompt = `아래 project.blueprint.md와 artifact.plan.md를 기준으로, Project_starter 레포의 capabilities/artifact-generator/capability.md에 따라 artifact.plan.md를 실행해서 계획된 산출물을 생성해줘. 실행이 끝나면 실행 요약을 보고해줘.
+
+## project.blueprint.md
+
+${bp}
+
+## artifact.plan.md
+
+${plan}`;
+  copyWithFeedback(prompt, event.target, '📦 산출물 생성 프롬프트 복사 (blueprint + plan 포함)');
 }
 
 updateUI();

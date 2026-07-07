@@ -44,6 +44,7 @@ Project_starter 레포를 참고해서 product/design/development/collaboration 
 # 단계별로 생성
 intake.md를 바탕으로 capabilities/blueprint-generator/capability.md에 따라 project.blueprint.md를 생성해줘
 project.blueprint.md를 바탕으로 capabilities/artifact-planner/capability.md에 따라 artifact.plan.md를 생성해줘
+artifact.plan.md를 capabilities/artifact-generator/capability.md에 따라 실행해서 계획된 산출물을 생성해줘
 
 # 개별 문서만 생성 (project.blueprint.md가 있어야 합니다)
 project.blueprint.md를 바탕으로 capabilities/document-generator/roles/planner.md 역할로 PRD를 작성해줘
@@ -73,6 +74,7 @@ Project_starter/
 │   ├── intake-generator/            사용자 폼 → intake.md (인터페이스는 app/ UI)
 │   ├── blueprint-generator/         intake.md → project.blueprint.md
 │   ├── artifact-planner/            project.blueprint.md → artifact.plan.md
+│   ├── artifact-generator/          artifact.plan.md 실행 — 생성을 개별 생성기에 위임하는 오케스트레이터
 │   └── document-generator/          계획된 문서 생성 (예정 — 재료는 준비됨)
 │       ├── roles/                   기획자 / 디자이너 / 개발자 역할 프롬프트
 │       └── templates/               product / design / development / collaboration 구조
@@ -103,12 +105,34 @@ intake.md (입력)
 project.blueprint.md (아키텍처 단일 기준 — source of truth)
     ↓  capabilities/artifact-planner
 artifact.plan.md (생성할 산출물과 순서 결정 — 실행 계획)
-    ↓  capabilities/document-generator (roles × templates)
+    ↓  capabilities/artifact-generator (오케스트레이션 — 생성은 개별 생성기에 위임)
 product.md / design.md / development.md / collaboration.md ...
 ```
 
 Blueprint는 "무엇을 / 왜 / 누구를 위해 / 어떻게 만들 것인가"를 한 문서로 확정합니다. 이후 문서가 Blueprint와 충돌하면 Blueprint가 우선합니다.
 Artifact Plan은 이 프로젝트에 실제로 가치 있는 산출물만 골라 생성 순서와 담당 AI를 정합니다 — 계획에 없는 문서는 만들지 않습니다.
+
+Artifact Generator는 스스로 문서를 만들지 않고, plan에 따라 아래처럼 개별 생성기에 위임(dispatch)만 합니다.
+
+```
+Core
+        │
+        ▼
+Blueprint Generator
+        │
+        ▼
+Artifact Planner
+        │
+        ▼
+Artifact Generator ⭐
+        │
+        ├──────────────┬──────────────┬──────────────┐
+        ▼              ▼              ▼              ▼
+Product        Design      Development     Collaboration
+Generator      Generator    Generator      Generator
+```
+
+지금은 Product/Design/Development/Collaboration 네 생성기가 각각의 capability 모듈이 아니라 `capabilities/document-generator/roles/`(planner / designer / developer) + `templates/`로 구현되어 있습니다. Artifact Generator 입장에서는 이 구분이 보이지 않습니다 — dispatch 대상이 "document-generator 역할"이든 "독립 모듈"이든 [Generator Contract](capabilities/artifact-generator/capability.md)만 지키면 됩니다. 산출물 수가 늘어 role 분리로는 감당이 안 되면, 이 다이어그램처럼 각 생성기를 `capabilities/product-generator/` 같은 독립 모듈로 승격할 수 있습니다 — Artifact Generator는 수정 없이 그대로 동작합니다.
 
 ## 프롬프트 구조 (3계층)
 
