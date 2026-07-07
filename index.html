@@ -260,46 +260,72 @@ textarea {
   line-height: 1.5;
 }
 
-/* Result */
-.result-card {
+/* Editor compare (원본 | 수정본) */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.editor-pane {
+  display: flex;
+  flex-direction: column;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow);
 }
-.result-card-header {
-  padding: 14px 18px;
+.editor-pane-header {
+  padding: 9px 14px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
+  min-height: 38px;
 }
-.result-card-header span { font-size: 13px; font-weight: 500; color: var(--text-sub); }
-.copy-btn-sm {
-  padding: 5px 12px;
+.editor-pane-header span {
   font-size: 12px;
   font-weight: 600;
+  color: var(--text-sub);
+}
+.btn-ghost {
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 600;
   font-family: inherit;
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-light);
+  color: var(--text-sub);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: opacity .15s;
+  white-space: nowrap;
 }
-.copy-btn-sm:hover { opacity: .85; }
-.result-content {
-  padding: 18px;
-  font-size: 13px;
+.btn-ghost:hover { opacity: .75; }
+.editor-view, .editor-textarea {
+  padding: 14px;
+  font-size: 12.5px;
   line-height: 1.7;
   font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace;
-  color: var(--text);
   white-space: pre-wrap;
   word-break: break-word;
-  max-height: 360px;
-  overflow-y: auto;
   background: #fafaf9;
+  color: var(--text);
+  min-height: 320px;
+  max-height: 440px;
+  overflow-y: auto;
+}
+.editor-textarea {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  resize: vertical;
+  outline: none;
+  flex: 1;
+}
+@media (max-width: 640px) {
+  .compare-grid { grid-template-columns: 1fr; }
 }
 
 /* Footer Nav */
@@ -403,9 +429,9 @@ textarea {
 
 <header class="header">
   <div class="logo">Project Starter <span>by WOWAIST</span></div>
-  <div class="step-indicator" id="stepIndicator">1 / 7</div>
+  <div class="step-indicator" id="stepIndicator">1 / 8</div>
   <div class="progress-bar-wrap">
-    <div class="progress-bar" id="progressBar" style="width: 14.2%"></div>
+    <div class="progress-bar" id="progressBar" style="width: 12.5%"></div>
   </div>
 </header>
 
@@ -745,32 +771,72 @@ textarea {
     </div>
   </div>
 
-  <!-- STEP 7: 결과 -->
+  <!-- STEP 7: intake.md 확인 & 편집 -->
   <div class="step" id="step7">
-    <span class="step-tag">완료</span>
-    <h1 class="step-title">intake.md가 준비됐어요 🎉</h1>
-    <p class="step-desc">아래 내용을 복사해서 <code style="background:#f0efeb;padding:2px 6px;border-radius:4px;font-size:13px">intake.md</code>에 붙여넣고, AI에게 문서 생성을 요청하세요.</p>
+    <span class="step-tag">Step 7</span>
+    <h1 class="step-title">intake.md를 확인하고 다듬어요</h1>
+    <p class="step-desc">왼쪽은 폼 입력으로 생성된 원본, 오른쪽은 자유롭게 고칠 수 있는 수정본입니다. <b>수정본이 Blueprint 생성에 사용됩니다.</b></p>
 
-    <div class="result-card">
-      <div class="result-card-header">
-        <span>📄 intake.md</span>
-        <button class="copy-btn-sm" id="copyBtn" onclick="copyResult()">복사하기</button>
+    <div class="compare-grid">
+      <div class="editor-pane">
+        <div class="editor-pane-header"><span>📄 원본 (폼 입력 기준)</span></div>
+        <pre class="editor-view" id="intakeOriginalView"></pre>
       </div>
-      <pre class="result-content" id="resultContent"></pre>
+      <div class="editor-pane">
+        <div class="editor-pane-header">
+          <span>✏️ 수정본 (편집 가능)</span>
+          <button class="btn-ghost" onclick="resetIntakeEdit()">원본으로 되돌리기</button>
+        </div>
+        <textarea class="editor-textarea" id="intakeEdited" spellcheck="false"></textarea>
+      </div>
     </div>
 
     <div class="complete-action">
-      <button class="btn-action secondary" onclick="copyAIPrompt()">
-        💬 AI 요청 프롬프트 복사
+      <button class="btn-action secondary" onclick="copyIntake(event)">
+        📄 intake.md 복사 (수정본)
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 8: project.blueprint.md 생성 -->
+  <div class="step" id="step8">
+    <span class="step-tag">Step 8 — Blueprint</span>
+    <h1 class="step-title">project.blueprint.md를 만들어요 🏗️</h1>
+    <p class="step-desc">intake.md 수정본을 바탕으로 AI에게 Blueprint 생성을 요청하고, 결과를 아래에 붙여넣어 다듬으세요. 이 문서가 이후 모든 문서의 기준이 됩니다.</p>
+
+    <div class="complete-action" style="margin:0 0 20px">
+      <button class="btn-action primary" onclick="copyBlueprintPrompt(event)">
+        🏗️ Blueprint 생성 프롬프트 복사 (intake.md 포함)
+      </button>
+    </div>
+
+    <div class="compare-grid">
+      <div class="editor-pane">
+        <div class="editor-pane-header"><span>🤖 원본 (AI 생성 결과)</span></div>
+        <textarea class="editor-textarea" id="bpOriginal" spellcheck="false" placeholder="AI가 생성한 project.blueprint.md 내용을 여기에 붙여넣으세요."></textarea>
+      </div>
+      <div class="editor-pane">
+        <div class="editor-pane-header">
+          <span>✏️ 수정본 (편집 가능)</span>
+          <button class="btn-ghost" onclick="resetBpEdit()">원본 가져오기</button>
+        </div>
+        <textarea class="editor-textarea" id="bpEdited" spellcheck="false" placeholder="원본을 붙여넣으면 자동으로 채워집니다. 여기서 자유롭게 수정하세요."></textarea>
+      </div>
+    </div>
+
+    <div class="complete-action">
+      <button class="btn-action secondary" onclick="copyBlueprint(event)">
+        📋 project.blueprint.md 복사 (수정본)
       </button>
     </div>
 
     <div style="margin-top:28px;padding:16px;background:#f0efeb;border-radius:var(--radius-sm)">
-      <p style="font-size:13px;font-weight:600;margin-bottom:8px">AI에게 이렇게 요청하세요</p>
+      <p style="font-size:13px;font-weight:600;margin-bottom:8px">진행 방법</p>
       <p style="font-size:13px;color:var(--text-sub);line-height:1.7">
-        <code style="background:#e5e4e0;padding:2px 5px;border-radius:4px;font-size:12px">
-          Project_starter 레포를 참고해서 intake.md를 바탕으로 product / design / development / collaboration 문서를 생성해줘
-        </code>
+        1. 위 버튼으로 프롬프트를 복사해 AI 도구(Claude Code, Cursor, Codex 등)에 요청하세요.<br>
+        2. AI가 생성한 blueprint를 <b>원본</b>에 붙여넣고, <b>수정본</b>에서 다듬으세요.<br>
+        3. 수정본을 복사해 프로젝트 루트에 <code style="background:#e5e4e0;padding:2px 5px;border-radius:4px;font-size:12px">project.blueprint.md</code>로 저장하세요.<br>
+        4. 다음 단계(생성할 문서 결정 → 문서 생성)는 Blueprint 확정 후 진행합니다.
       </p>
     </div>
   </div>
@@ -785,9 +851,11 @@ textarea {
 </nav>
 
 <script>
-const TOTAL = 7;
+const TOTAL = 8;
 let current = 1;
 const store = {};
+let intakeDirty = false;  // 사용자가 intake 수정본을 직접 편집했는지
+let bpDirty = false;      // 사용자가 blueprint 수정본을 직접 편집했는지
 
 function getVal(key) {
   const el = document.getElementById(key);
@@ -833,8 +901,11 @@ function updateUI() {
   prev.classList.toggle('btn-hidden', current === 1);
   if (current === TOTAL) {
     next.style.display = 'none';
-  } else if (current === TOTAL - 1) {
-    next.textContent = '문서 생성하기 ✨';
+  } else if (current === 6) {
+    next.textContent = 'intake.md 만들기 ✨';
+    next.style.display = '';
+  } else if (current === 7) {
+    next.textContent = 'Blueprint 만들기 →';
     next.style.display = '';
   } else {
     next.textContent = '다음 단계 →';
@@ -849,7 +920,7 @@ function prevStep() {
 function nextStep() {
   if (current < TOTAL) {
     current++;
-    if (current === TOTAL) buildResult();
+    if (current === 7) prepareIntakeStep();
     updateUI();
     window.scrollTo(0,0);
   }
@@ -924,27 +995,69 @@ ${features}
 - **소통 도구**: ${comm}`;
 }
 
-function buildResult() {
-  document.getElementById('resultContent').textContent = buildIntake();
+// ---- Step 7: intake.md 편집 ----
+
+function prepareIntakeStep() {
+  const orig = buildIntake();
+  document.getElementById('intakeOriginalView').textContent = orig;
+  if (!intakeDirty) document.getElementById('intakeEdited').value = orig;
 }
 
-function copyResult() {
-  navigator.clipboard.writeText(buildIntake()).then(() => {
-    const btn = document.getElementById('copyBtn');
+function resetIntakeEdit() {
+  document.getElementById('intakeEdited').value = document.getElementById('intakeOriginalView').textContent;
+  intakeDirty = false;
+}
+
+// 최종 intake = 수정본 (비어 있으면 폼 원본으로 폴백)
+function getIntakeFinal() {
+  const edited = document.getElementById('intakeEdited').value.trim();
+  return edited || buildIntake();
+}
+
+// ---- Step 8: project.blueprint.md 편집 ----
+
+function resetBpEdit() {
+  document.getElementById('bpEdited').value = document.getElementById('bpOriginal').value;
+  bpDirty = false;
+}
+
+document.getElementById('intakeEdited').addEventListener('input', () => { intakeDirty = true; });
+document.getElementById('bpEdited').addEventListener('input', () => { bpDirty = true; });
+// 원본 붙여넣기 시, 수정본을 직접 편집하기 전까지는 자동 동기화
+document.getElementById('bpOriginal').addEventListener('input', () => {
+  if (!bpDirty) document.getElementById('bpEdited').value = document.getElementById('bpOriginal').value;
+});
+
+// ---- 복사 ----
+
+function copyWithFeedback(text, btn, label) {
+  navigator.clipboard.writeText(text).then(() => {
     btn.textContent = '복사됨 ✓';
-    setTimeout(() => btn.textContent = '복사하기', 2000);
+    setTimeout(() => btn.textContent = label, 2000);
   });
 }
 
-function copyAIPrompt() {
-  const prompt = `아래 프로젝트 정보를 바탕으로, Project_starter 레포의 docs/core_system_prompt.md(AI Project Architect) 원칙에 따라 templates/와 prompts/를 참고해서 product.md, design.md, development.md, collaboration.md 문서를 생성해줘.
+function copyIntake(event) {
+  copyWithFeedback(getIntakeFinal(), event.target, '📄 intake.md 복사 (수정본)');
+}
 
-${buildIntake()}`;
-  navigator.clipboard.writeText(prompt).then(() => {
+function copyBlueprintPrompt(event) {
+  const prompt = `아래 프로젝트 정보를 바탕으로, Project_starter 레포의 docs/core_system_prompt.md(AI Project Architect) 원칙과 docs/blueprint_generator_prompt.md에 따라 project.blueprint.md를 생성해줘.
+
+${getIntakeFinal()}`;
+  copyWithFeedback(prompt, event.target, '🏗️ Blueprint 생성 프롬프트 복사 (intake.md 포함)');
+}
+
+function copyBlueprint(event) {
+  const content = document.getElementById('bpEdited').value.trim()
+    || document.getElementById('bpOriginal').value.trim();
+  if (!content) {
     const btn = event.target;
-    btn.textContent = '복사됨 ✓';
-    setTimeout(() => btn.textContent = '💬 AI 요청 프롬프트 복사', 2000);
-  });
+    btn.textContent = '내용이 비어 있어요 — 원본에 붙여넣어 주세요';
+    setTimeout(() => btn.textContent = '📋 project.blueprint.md 복사 (수정본)', 2500);
+    return;
+  }
+  copyWithFeedback(content, event.target, '📋 project.blueprint.md 복사 (수정본)');
 }
 
 updateUI();

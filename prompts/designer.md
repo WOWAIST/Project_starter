@@ -7,11 +7,11 @@
 
 ## 작업 지시
 
-`intake.md` 파일의 내용을 읽고, `templates/design.md` 구조를 참고해서 이 프로젝트에 맞는 Design Document를 생성하세요.
+`project.blueprint.md`(아키텍처 단일 기준)를 읽고, `templates/design.md` 구조를 참고해서 이 프로젝트에 맞는 Design Document를 생성하세요. blueprint에 없는 세부 정보(디자인 무드, 레퍼런스 등)만 `intake.md`에서 보충합니다. `project.blueprint.md`가 없으면 `docs/blueprint_generator_prompt.md`에 따라 먼저 생성하세요.
 
 ### 작성 원칙
 
-1. **사용자와 컨셉에서 시작하기**: 디자인 원칙은 intake.md의 "디자인 컨셉"과 "타겟 사용자"를 바탕으로 도출합니다. 단순히 "일관성, 단순함"처럼 범용적인 원칙이 아닌 이 프로젝트만의 원칙을 작성합니다.
+1. **사용자와 컨셉에서 시작하기**: 디자인 원칙은 blueprint의 "Target Users"·"Core Value Proposition"과 intake.md의 "디자인 컨셉"을 바탕으로 도출합니다. 단순히 "일관성, 단순함"처럼 범용적인 원칙이 아닌 이 프로젝트만의 원칙을 작성합니다.
 
 2. **컬러 시스템 제안**: 브랜드 컬러가 지정되지 않은 경우, 서비스 성격에 맞는 컬러 팔레트를 추천합니다. 접근성(대비율) 기준을 함께 명시하세요.
 

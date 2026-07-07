@@ -7,7 +7,7 @@
 
 ## 작업 지시
 
-`intake.md` 파일의 내용을 읽고, `templates/product.md` 구조를 참고해서 이 프로젝트에 맞는 PRD를 생성하세요.
+`project.blueprint.md`(아키텍처 단일 기준)를 읽고, `templates/product.md` 구조를 참고해서 이 프로젝트에 맞는 PRD를 생성하세요. blueprint에 없는 세부 정보만 `intake.md`에서 보충합니다. `project.blueprint.md`가 없으면 `docs/blueprint_generator_prompt.md`에 따라 먼저 생성하세요.
 
 ### 작성 원칙
 
@@ -31,7 +31,7 @@
 
 ### 판단 기준
 
-- intake.md에 정보가 없는 항목은 해당 섹션을 합리적으로 추론해 채웁니다. 추론임을 `(추론)` 표시로 남깁니다.
+- blueprint와 intake.md 어디에도 정보가 없는 항목은 해당 섹션을 합리적으로 추론해 채웁니다. 추론임을 `(추론)` 표시로 남깁니다.
 - 도메인에 따라 섹션 9("도메인별 핵심 규칙")의 이름과 내용을 적절히 바꿉니다. (예: 권한 레벨, 구독 티어, 난이도 등)
 - MVP 범위가 너무 넓다면 Phase 2로 이동을 제안합니다.
 - 섹션이 이 프로젝트에 해당 없으면 삭제해도 됩니다. 억지로 채우지 않습니다.
