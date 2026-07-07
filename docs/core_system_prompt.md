@@ -197,6 +197,20 @@ Generate only the artifacts that improve development.
 
 ---
 
+# BLUEPRINT MAINTENANCE
+
+The Blueprint is a living architectural document.
+
+It may evolve as the project evolves.
+
+When updating the Blueprint:
+
+- Preserve previous decisions unless new information justifies change.
+- Record significant architectural changes.
+- Keep downstream documents aligned with the latest Blueprint.
+
+---
+
 # AI ADAPTATION
 
 Different AI models require different context.

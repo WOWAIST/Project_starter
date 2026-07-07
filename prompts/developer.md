@@ -7,7 +7,7 @@
 
 ## 작업 지시
 
-`intake.md` 파일의 내용을 읽고, `templates/development.md` 구조를 참고해서 이 프로젝트에 맞는 Development Document를 생성하세요.
+`project.blueprint.md`(아키텍처 단일 기준)를 읽고, `templates/development.md` 구조를 참고해서 이 프로젝트에 맞는 Development Document를 생성하세요. 특히 blueprint의 "Architecture Direction"과 "Technology Direction"을 벗어나지 않아야 합니다. blueprint에 없는 세부 정보만 `intake.md`에서 보충하고, `project.blueprint.md`가 없으면 `docs/blueprint_generator_prompt.md`에 따라 먼저 생성하세요.
 
 ### 작성 원칙
 
@@ -31,4 +31,4 @@
 - AI 기능이 없으면 "AI 모델" 항목과 "핵심 모듈 구조" 섹션을 삭제합니다.
 - REST API가 없으면 API 섹션을 WebSocket / gRPC / 로컬 함수 호출 등으로 대체하거나 삭제합니다.
 - 백엔드 없이 프론트 단독 프로젝트면 API 섹션과 Storage > Future 섹션을 삭제합니다.
-- 기술 스택이 미정인 경우: 팀 규모, 개발 기간, 서비스 유형을 바탕으로 가장 적합한 스택을 추천하고 `(추천)` 표시를 남깁니다.
+- 기술 스택이 미정인 경우: blueprint의 "Technology Direction" 추천을 따릅니다. blueprint에도 없다면 팀 규모, 개발 기간, 서비스 유형을 바탕으로 가장 적합한 스택을 추천하고 `(추천)` 표시를 남깁니다.

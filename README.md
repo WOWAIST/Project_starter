@@ -38,19 +38,22 @@ intake.md
 사용 중인 AI 코딩 도구(Claude Code, Cursor, Codex 등)에서 아래와 같이 요청합니다.
 
 ```
-# 전체 문서 한 번에 생성
+# 전체 문서 한 번에 생성 (Blueprint → 4개 문서 순으로 진행됩니다)
 Project_starter 레포를 참고해서 product/design/development/collaboration 문서를 생성해줘
 
-# 개별 문서만 생성
-intake.md를 바탕으로 prompts/planner.md 역할로 PRD를 작성해줘
-intake.md를 바탕으로 prompts/designer.md 역할로 디자인 문서를 작성해줘
-intake.md를 바탕으로 prompts/developer.md 역할로 개발 문서를 작성해줘
+# Blueprint만 먼저 생성
+intake.md를 바탕으로 docs/blueprint_generator_prompt.md에 따라 project.blueprint.md를 생성해줘
+
+# 개별 문서만 생성 (project.blueprint.md가 있어야 합니다)
+project.blueprint.md를 바탕으로 prompts/planner.md 역할로 PRD를 작성해줘
+project.blueprint.md를 바탕으로 prompts/designer.md 역할로 디자인 문서를 작성해줘
+project.blueprint.md를 바탕으로 prompts/developer.md 역할로 개발 문서를 작성해줘
 ```
 
 ### Step 4 — 생성된 문서 확인 & 수정
 
-AI가 `output/` 폴더(또는 지정한 위치)에 문서를 생성합니다.  
-팀과 함께 검토하고 필요한 부분을 수정하세요.
+AI가 프로젝트 루트에 `project.blueprint.md`를, `output/` 폴더(또는 지정한 위치)에 나머지 문서를 생성합니다.  
+팀과 함께 검토하고 필요한 부분을 수정하세요. 특히 **project.blueprint.md는 모든 문서의 기준**이므로 가장 먼저 확정하는 것을 권장합니다.
 
 ---
 
@@ -62,7 +65,8 @@ Project_starter/
 ├── intake.md                  ← ✏️  여기를 채워주세요 (프로젝트 정보 입력)
 │
 ├── docs/
-│   └── core_system_prompt.md  ← 최상위 시스템 프롬프트 (AI Project Architect)
+│   ├── core_system_prompt.md  ← 최상위 시스템 프롬프트 (AI Project Architect)
+│   └── blueprint_generator_prompt.md  ← Blueprint 생성 지침
 │
 ├── templates/                 ← 문서 구조 템플릿 (AI가 참고)
 │   ├── product.md             PRD 구조
@@ -80,6 +84,20 @@ Project_starter/
 ```
 
 ---
+
+## 문서 생성 파이프라인
+
+모든 문서는 intake.md에서 바로 만들어지지 않고, **Blueprint를 거쳐** 생성됩니다.
+
+```
+intake.md (입력)
+    ↓  docs/blueprint_generator_prompt.md
+project.blueprint.md (아키텍처 단일 기준 — source of truth)
+    ↓  prompts/ × templates/
+product.md / design.md / development.md / collaboration.md
+```
+
+Blueprint는 "무엇을 / 왜 / 누구를 위해 / 어떻게 만들 것인가"를 한 문서로 확정합니다. 이후 문서가 Blueprint와 충돌하면 Blueprint가 우선합니다.
 
 ## 프롬프트 구조 (3계층)
 
@@ -102,6 +120,7 @@ templates/*.md               구조 — 각 문서의 포맷과 섹션
 
 | 문서 | 내용 | 주요 독자 |
 |------|------|---------|
+| `project.blueprint.md` | 아키텍처 방향, 스코프, 마일스톤 — 모든 문서의 기준 | 전체 팀 |
 | `product.md` | PRD — 기능 정의, 사용자 스토리, 성공 지표 | 전체 팀 |
 | `design.md` | 디자인 시스템, 컬러/타이포, 주요 화면 | 디자이너, 프론트 |
 | `development.md` | 아키텍처, API 설계, 기술 스택, 배포 전략 | 개발팀 |
