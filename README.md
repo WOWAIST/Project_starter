@@ -1,6 +1,6 @@
 # Project Starter
 
-새 프로젝트를 시작할 때 필요한 **기획 / 디자인 / 개발 / 협업 문서**를 Claude와 함께 빠르게 만들어주는 템플릿 레포입니다.
+새 프로젝트를 시작할 때 필요한 **기획 / 디자인 / 개발 / 협업 문서**를 AI와 함께 빠르게 만들어주는 템플릿 레포입니다.
 
 ---
 
@@ -33,9 +33,9 @@ intake.md
 └── 8. 제약 사항
 ```
 
-### Step 3 — Claude에게 문서 생성 요청
+### Step 3 — AI에게 문서 생성 요청
 
-Claude Code(또는 Claude.ai)에서 아래와 같이 요청합니다.
+사용 중인 AI 코딩 도구(Claude Code, Cursor, Codex 등)에서 아래와 같이 요청합니다.
 
 ```
 # 전체 문서 한 번에 생성
@@ -49,7 +49,7 @@ intake.md를 바탕으로 prompts/developer.md 역할로 개발 문서를 작성
 
 ### Step 4 — 생성된 문서 확인 & 수정
 
-Claude가 `output/` 폴더(또는 지정한 위치)에 문서를 생성합니다.  
+AI가 `output/` 폴더(또는 지정한 위치)에 문서를 생성합니다.  
 팀과 함께 검토하고 필요한 부분을 수정하세요.
 
 ---
@@ -64,18 +64,18 @@ Project_starter/
 ├── docs/
 │   └── core_system_prompt.md  ← 최상위 시스템 프롬프트 (AI Project Architect)
 │
-├── templates/                 ← 문서 구조 템플릿 (Claude가 참고)
+├── templates/                 ← 문서 구조 템플릿 (AI가 참고)
 │   ├── product.md             PRD 구조
 │   ├── design.md              디자인 문서 구조
 │   ├── development.md         개발 문서 구조
 │   └── collaboration.md       협업 가이드 구조
 │
-├── prompts/                   ← Claude 역할 프롬프트
+├── prompts/                   ← AI 역할 프롬프트
 │   ├── planner.md             기획자 역할 지시
 │   ├── designer.md            디자이너 역할 지시
 │   └── developer.md           개발자 역할 지시
 │
-├── CLAUDE.md                  ← Claude Code가 자동으로 읽는 작업 지침
+├── CLAUDE.md                  ← Claude Code가 자동으로 읽는 작업 지침 (다른 도구는 각자의 규칙 파일 사용)
 └── README.md
 ```
 
@@ -83,7 +83,7 @@ Project_starter/
 
 ## 프롬프트 구조 (3계층)
 
-Claude는 아래 3계층을 조합해 문서를 생성합니다.
+AI는 아래 3계층을 조합해 문서를 생성합니다.
 
 ```
 docs/core_system_prompt.md   정체성 & 원칙 — "AI Project Architect"로서 판단하는 기준
@@ -94,7 +94,7 @@ templates/*.md               구조 — 각 문서의 포맷과 섹션
 ```
 
 - **core_system_prompt.md**: 모호함 최소화, 가치 없는 산출물 생략, 모든 추천에 근거 제시, 팀 규모·프로젝트 유형에 맞는 적응 등 전체 작업의 판단 기준을 정의합니다.
-- **CLAUDE.md**: Claude Code 사용 시 자동으로 로드되어 위 계층을 연결합니다. Claude.ai에서 사용할 경우 `docs/core_system_prompt.md`를 함께 첨부하세요.
+- **CLAUDE.md**: Claude Code 사용 시 자동으로 로드되어 위 계층을 연결합니다. 다른 AI 도구(Cursor, Codex, Gemini 등)를 사용할 경우 해당 도구의 규칙 파일(`.cursorrules`, `AGENTS.md` 등)에서 `docs/core_system_prompt.md`를 참조하거나, 대화에 직접 첨부하세요.
 
 ---
 
@@ -114,4 +114,4 @@ templates/*.md               구조 — 각 문서의 포맷과 섹션
 - **intake.md를 자세히 채울수록** 문서 품질이 높아집니다.
 - 문서 생성 후 팀 전체가 함께 리뷰하고 수정하는 것을 권장합니다.
 - 프로젝트 진행 중 요구사항이 바뀌면 intake.md를 업데이트하고 다시 생성할 수 있습니다.
-- `prompts/` 파일을 직접 수정해 Claude의 문서 작성 방식을 커스터마이징할 수 있습니다.
+- `prompts/` 파일을 직접 수정해 AI의 문서 작성 방식을 커스터마이징할 수 있습니다.
