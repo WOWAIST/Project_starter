@@ -937,7 +937,7 @@ function copyResult() {
 }
 
 function copyClaudePrompt() {
-  const prompt = `아래 프로젝트 정보를 바탕으로, Project_starter 레포의 templates/와 prompts/를 참고해서 product.md, design.md, development.md, collaboration.md 문서를 생성해줘.
+  const prompt = `아래 프로젝트 정보를 바탕으로, Project_starter 레포의 docs/core_system_prompt.md(AI Project Architect) 원칙에 따라 templates/와 prompts/를 참고해서 product.md, design.md, development.md, collaboration.md 문서를 생성해줘.
 
 ${buildIntake()}`;
   navigator.clipboard.writeText(prompt).then(() => {

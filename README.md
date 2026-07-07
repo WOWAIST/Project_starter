@@ -61,6 +61,9 @@ Project_starter/
 │
 ├── intake.md                  ← ✏️  여기를 채워주세요 (프로젝트 정보 입력)
 │
+├── docs/
+│   └── core_system_prompt.md  ← 최상위 시스템 프롬프트 (AI Project Architect)
+│
 ├── templates/                 ← 문서 구조 템플릿 (Claude가 참고)
 │   ├── product.md             PRD 구조
 │   ├── design.md              디자인 문서 구조
@@ -72,8 +75,26 @@ Project_starter/
 │   ├── designer.md            디자이너 역할 지시
 │   └── developer.md           개발자 역할 지시
 │
+├── CLAUDE.md                  ← Claude Code가 자동으로 읽는 작업 지침
 └── README.md
 ```
+
+---
+
+## 프롬프트 구조 (3계층)
+
+Claude는 아래 3계층을 조합해 문서를 생성합니다.
+
+```
+docs/core_system_prompt.md   정체성 & 원칙 — "AI Project Architect"로서 판단하는 기준
+        ↓
+prompts/*.md                 역할 — 문서별 작성 원칙 (기획자 / 디자이너 / 개발자)
+        ↓
+templates/*.md               구조 — 각 문서의 포맷과 섹션
+```
+
+- **core_system_prompt.md**: 모호함 최소화, 가치 없는 산출물 생략, 모든 추천에 근거 제시, 팀 규모·프로젝트 유형에 맞는 적응 등 전체 작업의 판단 기준을 정의합니다.
+- **CLAUDE.md**: Claude Code 사용 시 자동으로 로드되어 위 계층을 연결합니다. Claude.ai에서 사용할 경우 `docs/core_system_prompt.md`를 함께 첨부하세요.
 
 ---
 
