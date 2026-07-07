@@ -429,9 +429,9 @@ textarea {
 
 <header class="header">
   <div class="logo">Project Starter <span>by WOWAIST</span></div>
-  <div class="step-indicator" id="stepIndicator">1 / 8</div>
+  <div class="step-indicator" id="stepIndicator">1 / 9</div>
   <div class="progress-bar-wrap">
-    <div class="progress-bar" id="progressBar" style="width: 12.5%"></div>
+    <div class="progress-bar" id="progressBar" style="width: 11.1%"></div>
   </div>
 </header>
 
@@ -818,7 +818,7 @@ textarea {
       <div class="editor-pane">
         <div class="editor-pane-header">
           <span>✏️ 수정본 (편집 가능)</span>
-          <button class="btn-ghost" onclick="resetBpEdit()">원본 가져오기</button>
+          <button class="btn-ghost" onclick="bpPair.reset()">원본 가져오기</button>
         </div>
         <textarea class="editor-textarea" id="bpEdited" spellcheck="false" placeholder="원본을 붙여넣으면 자동으로 채워집니다. 여기서 자유롭게 수정하세요."></textarea>
       </div>
@@ -836,7 +836,50 @@ textarea {
         1. 위 버튼으로 프롬프트를 복사해 AI 도구(Claude Code, Cursor, Codex 등)에 요청하세요.<br>
         2. AI가 생성한 blueprint를 <b>원본</b>에 붙여넣고, <b>수정본</b>에서 다듬으세요.<br>
         3. 수정본을 복사해 프로젝트 루트에 <code style="background:#e5e4e0;padding:2px 5px;border-radius:4px;font-size:12px">project.blueprint.md</code>로 저장하세요.<br>
-        4. 다음 단계(생성할 문서 결정 → 문서 생성)는 Blueprint 확정 후 진행합니다.
+        4. Blueprint가 확정되면 <b>다음 단계</b>에서 생성할 문서를 결정합니다.
+      </p>
+    </div>
+  </div>
+
+  <!-- STEP 9: artifact.plan.md 생성 (생성할 문서 결정) -->
+  <div class="step" id="step9">
+    <span class="step-tag">Step 9 — 생성할 문서 결정</span>
+    <h1 class="step-title">artifact.plan.md를 만들어요 🗂️</h1>
+    <p class="step-desc">Blueprint를 바탕으로 이 프로젝트에 실제로 필요한 산출물(문서, AI 설정, 레포 구성 등)과 생성 순서를 결정합니다. 계획에 없는 문서는 만들지 않습니다.</p>
+
+    <div class="complete-action" style="margin:0 0 20px">
+      <button class="btn-action primary" onclick="copyArtifactPrompt(event)">
+        🗂️ 문서 계획 생성 프롬프트 복사 (blueprint 포함)
+      </button>
+    </div>
+
+    <div class="compare-grid">
+      <div class="editor-pane">
+        <div class="editor-pane-header"><span>🤖 원본 (AI 생성 결과)</span></div>
+        <textarea class="editor-textarea" id="apOriginal" spellcheck="false" placeholder="AI가 생성한 artifact.plan.md 내용을 여기에 붙여넣으세요."></textarea>
+      </div>
+      <div class="editor-pane">
+        <div class="editor-pane-header">
+          <span>✏️ 수정본 (편집 가능)</span>
+          <button class="btn-ghost" onclick="apPair.reset()">원본 가져오기</button>
+        </div>
+        <textarea class="editor-textarea" id="apEdited" spellcheck="false" placeholder="원본을 붙여넣으면 자동으로 채워집니다. 필요 없는 산출물은 여기서 덜어내세요."></textarea>
+      </div>
+    </div>
+
+    <div class="complete-action">
+      <button class="btn-action secondary" onclick="copyArtifactPlan(event)">
+        🗂️ artifact.plan.md 복사 (수정본)
+      </button>
+    </div>
+
+    <div style="margin-top:28px;padding:16px;background:#f0efeb;border-radius:var(--radius-sm)">
+      <p style="font-size:13px;font-weight:600;margin-bottom:8px">진행 방법</p>
+      <p style="font-size:13px;color:var(--text-sub);line-height:1.7">
+        1. 위 버튼으로 프롬프트를 복사해 AI 도구에 요청하세요. (Step 8의 blueprint 수정본이 함께 복사됩니다)<br>
+        2. AI가 생성한 계획을 <b>원본</b>에 붙여넣고, <b>수정본</b>에서 산출물을 더하거나 덜어내세요.<br>
+        3. 수정본을 복사해 프로젝트 루트에 <code style="background:#e5e4e0;padding:2px 5px;border-radius:4px;font-size:12px">artifact.plan.md</code>로 저장하세요.<br>
+        4. 다음 단계(계획에 따른 문서 생성)는 artifact.plan.md 확정 후 진행합니다.
       </p>
     </div>
   </div>
@@ -851,11 +894,10 @@ textarea {
 </nav>
 
 <script>
-const TOTAL = 8;
+const TOTAL = 9;
 let current = 1;
 const store = {};
 let intakeDirty = false;  // 사용자가 intake 수정본을 직접 편집했는지
-let bpDirty = false;      // 사용자가 blueprint 수정본을 직접 편집했는지
 
 function getVal(key) {
   const el = document.getElementById(key);
@@ -906,6 +948,9 @@ function updateUI() {
     next.style.display = '';
   } else if (current === 7) {
     next.textContent = 'Blueprint 만들기 →';
+    next.style.display = '';
+  } else if (current === 8) {
+    next.textContent = '생성할 문서 결정하기 →';
     next.style.display = '';
   } else {
     next.textContent = '다음 단계 →';
@@ -1014,19 +1059,27 @@ function getIntakeFinal() {
   return edited || buildIntake();
 }
 
-// ---- Step 8: project.blueprint.md 편집 ----
+// ---- 붙여넣기형 에디터 쌍 (원본 | 수정본) ----
+// 원본 붙여넣기 시, 수정본을 직접 편집하기 전까지는 자동 동기화
 
-function resetBpEdit() {
-  document.getElementById('bpEdited').value = document.getElementById('bpOriginal').value;
-  bpDirty = false;
+function wirePair(origId, editId) {
+  const orig = document.getElementById(origId);
+  const edit = document.getElementById(editId);
+  let dirty = false;
+  edit.addEventListener('input', () => { dirty = true; });
+  orig.addEventListener('input', () => {
+    if (!dirty) edit.value = orig.value;
+  });
+  return {
+    reset() { edit.value = orig.value; dirty = false; },
+    final() { return edit.value.trim() || orig.value.trim(); }
+  };
 }
 
+const bpPair = wirePair('bpOriginal', 'bpEdited');   // Step 8: project.blueprint.md
+const apPair = wirePair('apOriginal', 'apEdited');   // Step 9: artifact.plan.md
+
 document.getElementById('intakeEdited').addEventListener('input', () => { intakeDirty = true; });
-document.getElementById('bpEdited').addEventListener('input', () => { bpDirty = true; });
-// 원본 붙여넣기 시, 수정본을 직접 편집하기 전까지는 자동 동기화
-document.getElementById('bpOriginal').addEventListener('input', () => {
-  if (!bpDirty) document.getElementById('bpEdited').value = document.getElementById('bpOriginal').value;
-});
 
 // ---- 복사 ----
 
@@ -1042,15 +1095,14 @@ function copyIntake(event) {
 }
 
 function copyBlueprintPrompt(event) {
-  const prompt = `아래 프로젝트 정보를 바탕으로, Project_starter 레포의 docs/core_system_prompt.md(AI Project Architect) 원칙과 docs/blueprint_generator_prompt.md에 따라 project.blueprint.md를 생성해줘.
+  const prompt = `아래 프로젝트 정보를 바탕으로, Project_starter 레포의 core/system_prompt.md(AI Project Architect) 원칙과 capabilities/blueprint-generator/capability.md에 따라 project.blueprint.md를 생성해줘.
 
 ${getIntakeFinal()}`;
   copyWithFeedback(prompt, event.target, '🏗️ Blueprint 생성 프롬프트 복사 (intake.md 포함)');
 }
 
 function copyBlueprint(event) {
-  const content = document.getElementById('bpEdited').value.trim()
-    || document.getElementById('bpOriginal').value.trim();
+  const content = bpPair.final();
   if (!content) {
     const btn = event.target;
     btn.textContent = '내용이 비어 있어요 — 원본에 붙여넣어 주세요';
@@ -1058,6 +1110,31 @@ function copyBlueprint(event) {
     return;
   }
   copyWithFeedback(content, event.target, '📋 project.blueprint.md 복사 (수정본)');
+}
+
+function copyArtifactPrompt(event) {
+  const bp = bpPair.final();
+  if (!bp) {
+    const btn = event.target;
+    btn.textContent = '먼저 Step 8에서 blueprint를 준비해주세요';
+    setTimeout(() => btn.textContent = '🗂️ 문서 계획 생성 프롬프트 복사 (blueprint 포함)', 2500);
+    return;
+  }
+  const prompt = `아래 project.blueprint.md를 기준으로, Project_starter 레포의 capabilities/artifact-planner/capability.md에 따라 artifact.plan.md를 생성해줘.
+
+${bp}`;
+  copyWithFeedback(prompt, event.target, '🗂️ 문서 계획 생성 프롬프트 복사 (blueprint 포함)');
+}
+
+function copyArtifactPlan(event) {
+  const content = apPair.final();
+  if (!content) {
+    const btn = event.target;
+    btn.textContent = '내용이 비어 있어요 — 원본에 붙여넣어 주세요';
+    setTimeout(() => btn.textContent = '🗂️ artifact.plan.md 복사 (수정본)', 2500);
+    return;
+  }
+  copyWithFeedback(content, event.target, '🗂️ artifact.plan.md 복사 (수정본)');
 }
 
 updateUI();
