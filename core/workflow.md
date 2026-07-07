@@ -40,10 +40,11 @@ AI-specific Prompt            [prompt-generator]                   ← 예정 (a
    | `development.md` | `capabilities/document-generator/roles/developer.md` | `capabilities/document-generator/templates/development.md` |
    | `collaboration.md` | (별도 역할 없음 — Architect가 직접) | `capabilities/document-generator/templates/collaboration.md` |
 
-6. 출력 위치: `project.blueprint.md`와 `artifact.plan.md`는 프로젝트 루트, 나머지 문서는 사용자가 지정한 폴더(지정이 없으면 `output/`).
+6. 출력 위치: `project.blueprint.md`와 `artifact.plan.md`는 프로젝트 루트. 나머지 산출물의 **확정 위치는 artifact.plan.md가 지정**한다(예: 문서 → `docs/`, AI 진입점 → 루트). plan에 지정이 없으면 `output/`에 생성하되, `output/`은 검토용 임시 위치다 — 검토 후 plan에 위치를 기록하고 옮긴다.
 
 ## 생성 시 판단 기준
 
+- **산출물 언어는 intake.md의 언어를 따른다.** 프롬프트·템플릿이 어떤 언어로 쓰였는지와 무관하다 (intake가 한국어면 모든 산출물도 한국어).
 - **충돌 시 Blueprint가 우선한다.** 하위 문서가 `project.blueprint.md`와 어긋나면 blueprint에 맞춘다. blueprint 자체를 바꿔야 하는 상황이면 사용자에게 먼저 알린다.
 - **가치 없는 섹션은 생성하지 않는다.** "보통 프로젝트에 있으니까" 만드는 문서·섹션은 금지.
 - **모든 추천에는 근거를 붙인다.** 기술/아키텍처 추천 시 왜, 트레이드오프, (필요시) 대안을 함께 쓴다.

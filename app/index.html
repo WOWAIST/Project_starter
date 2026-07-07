@@ -769,6 +769,24 @@ textarea {
         <div class="chip" data-value="미정"><span class="check">✓</span> 미정</div>
       </div>
     </div>
+
+    <div class="field">
+      <label class="field-label">개발에 사용할 AI 도구 <span class="opt-tag">복수 선택</span></label>
+      <div class="chip-wrap" data-key="f_aidev" data-single="false">
+        <div class="chip" data-value="Claude Code"><span class="check">✓</span> Claude Code</div>
+        <div class="chip" data-value="Cursor"><span class="check">✓</span> Cursor</div>
+        <div class="chip" data-value="Codex"><span class="check">✓</span> Codex</div>
+        <div class="chip" data-value="Gemini CLI"><span class="check">✓</span> Gemini CLI</div>
+        <div class="chip" data-value="GitHub Copilot"><span class="check">✓</span> GitHub Copilot</div>
+        <div class="chip" data-value="미정"><span class="check">✓</span> 미정</div>
+      </div>
+      <p class="hint">생성될 문서와 AI 지침 파일이 이 도구에 맞게 조정됩니다.</p>
+    </div>
+
+    <div class="field">
+      <label class="field-label">제약 사항 & 특이사항 <span class="opt-tag">선택</span></label>
+      <textarea id="f_constraints" placeholder="예: 레거시 API 사용 필수, 예산 제한, 보안 요구사항, 그 외 공유할 내용"></textarea>
+    </div>
   </div>
 
   <!-- STEP 7: intake.md 확인 & 편집 -->
@@ -1027,6 +1045,10 @@ function buildIntake() {
   const git = store['f_git'] || '미정';
   const issue = store['f_issue'] || '미정';
 
+  const aidev = getMulti('f_aidev') || '미정';
+  const constraints = getVal('f_constraints') || '없음';
+
+  // intake.md 템플릿(루트)과 동일한 8섹션 구조 — 폼에서 수집하지 않는 항목은 '미정'
   return `# 프로젝트 정보 (Project Intake)
 
 ## 1. 프로젝트 기본 정보
@@ -1034,35 +1056,48 @@ function buildIntake() {
 - **한 줄 소개**: ${pitch}
 - **서비스 유형**: ${type}
 - **개발 기간**: ${period}
-- **팀 규모**: ${teamsize}
-- **팀 구성**: ${roles}
+- **팀 규모 및 구성**: ${teamsize} (${roles})
 
 ## 2. 문제 & 목표
-- **주요 타겟 사용자**: ${users}
-- **핵심 문제**: ${problem}
-- **사용자가 얻는 핵심 가치**: ${value}
-- **성공 기준 (KPI)**: ${kpi}
+- **해결하려는 핵심 문제**: ${problem}
+- **왜 지금 이 문제를 해결해야 하는가**: 미정
+- **프로젝트의 성공 기준 (KPI / 목표 지표)**: ${kpi}
 
-## 3. 핵심 기능
+## 3. 사용자
+- **주요 타겟 사용자**: ${users}
+- **사용자의 주요 페인포인트**: 미정
+- **사용자가 얻게 되는 핵심 가치**: ${value}
+
+## 4. 핵심 기능
 ${features}
 
-## 4. 기술 스택
+## 5. 기술 스택 (개발)
 - **프론트엔드**: ${fe}
 - **UI 라이브러리**: ${ui}
 - **백엔드**: ${be}
 - **데이터베이스**: ${db}
 - **인프라 / 배포**: ${infra}
-- **AI / 외부 API**: ${ai}
+- **외부 API / 서드파티**: ${ai}
+- **모노레포 여부**: 미정
 
-## 5. 디자인 방향
-- **디자인 무드**: ${design}
-- **주요 디바이스 타겟**: ${device}
+## 6. 디자인 방향
+- **디자인 컨셉 / 무드**: ${design}
 - **레퍼런스 서비스**: ${ref}
+- **브랜드 컬러 (있다면)**: 미정
+- **주요 디바이스 타겟**: ${device}
 
-## 6. 협업 방식
-- **Git 전략**: ${git}
-- **이슈 트래킹**: ${issue}
-- **소통 도구**: ${comm}`;
+## 7. 협업 & 워크플로우
+- **버전 관리 전략**: ${git}
+- **이슈 트래킹 도구**: ${issue}
+- **커뮤니케이션 도구**: ${comm}
+- **배포 전략**: 미정
+- **코드 리뷰 방식**: 미정
+- **개발에 사용할 AI 도구**: ${aidev}
+
+## 8. 제약 사항 & 특이사항
+- **기술적 제약**: 미정
+- **비즈니스 제약**: 미정
+- **기타 공유할 내용**: ${constraints}`;
 }
 
 // ---- Step 7: intake.md 편집 ----
