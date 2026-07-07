@@ -39,9 +39,14 @@ capabilities/<kebab-case-이름>/
 2. `core/workflow.md`의 파이프라인에 등록한다. — **기존 모듈 수정은 이 한 줄이 전부여야 합니다.**
 3. 파이프라인에 사용자 단계가 생기면 `app/` UI의 스텝을 같은 변경에서 함께 추가한다.
 
+## 생성기(generator) capability의 추가 규칙
+
+산출물을 만드는 capability는 `capabilities/artifact-generator/capability.md`의 **Generator Contract**도 함께 따릅니다
+(디스패치 패키지 수신 → 산출물 + 상태 반환). 오케스트레이터인 artifact-generator 자체는 수정하지 않습니다.
+
 ## 예정된 capability
 
-artifact-generator · prompt-generator · github-bootstrap · documentation-generator ·
+prompt-generator · github-bootstrap · documentation-generator ·
 architecture-planner · task-planner · ai-workflow · review-engine · release-manager
 
 - AI별 적응 지식(Claude/Codex/Gemini용 프롬프트 변환 규칙)은 `adapters/ai/`에, 프로젝트 유형별 적응 지식(web/mobile/cli …)은 `adapters/project/`에 둡니다. 두 폴더는 첫 파일이 생길 때 만듭니다.

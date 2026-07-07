@@ -429,9 +429,9 @@ textarea {
 
 <header class="header">
   <div class="logo">Project Starter <span>by WOWAIST</span></div>
-  <div class="step-indicator" id="stepIndicator">1 / 9</div>
+  <div class="step-indicator" id="stepIndicator">1 / 10</div>
   <div class="progress-bar-wrap">
-    <div class="progress-bar" id="progressBar" style="width: 11.1%"></div>
+    <div class="progress-bar" id="progressBar" style="width: 10%"></div>
   </div>
 </header>
 
@@ -769,6 +769,24 @@ textarea {
         <div class="chip" data-value="미정"><span class="check">✓</span> 미정</div>
       </div>
     </div>
+
+    <div class="field">
+      <label class="field-label">개발에 사용할 AI 도구 <span class="opt-tag">복수 선택</span></label>
+      <div class="chip-wrap" data-key="f_aidev" data-single="false">
+        <div class="chip" data-value="Claude Code"><span class="check">✓</span> Claude Code</div>
+        <div class="chip" data-value="Cursor"><span class="check">✓</span> Cursor</div>
+        <div class="chip" data-value="Codex"><span class="check">✓</span> Codex</div>
+        <div class="chip" data-value="Gemini CLI"><span class="check">✓</span> Gemini CLI</div>
+        <div class="chip" data-value="GitHub Copilot"><span class="check">✓</span> GitHub Copilot</div>
+        <div class="chip" data-value="미정"><span class="check">✓</span> 미정</div>
+      </div>
+      <p class="hint">생성될 문서와 AI 지침 파일이 이 도구에 맞게 조정됩니다.</p>
+    </div>
+
+    <div class="field">
+      <label class="field-label">제약 사항 & 특이사항 <span class="opt-tag">선택</span></label>
+      <textarea id="f_constraints" placeholder="예: 레거시 API 사용 필수, 예산 제한, 보안 요구사항, 그 외 공유할 내용"></textarea>
+    </div>
   </div>
 
   <!-- STEP 7: intake.md 확인 & 편집 -->
@@ -879,7 +897,29 @@ textarea {
         1. 위 버튼으로 프롬프트를 복사해 AI 도구에 요청하세요. (Step 8의 blueprint 수정본이 함께 복사됩니다)<br>
         2. AI가 생성한 계획을 <b>원본</b>에 붙여넣고, <b>수정본</b>에서 산출물을 더하거나 덜어내세요.<br>
         3. 수정본을 복사해 프로젝트 루트에 <code style="background:#e5e4e0;padding:2px 5px;border-radius:4px;font-size:12px">artifact.plan.md</code>로 저장하세요.<br>
-        4. 다음 단계(계획에 따른 문서 생성)는 artifact.plan.md 확정 후 진행합니다.
+        4. artifact.plan.md가 확정되면 <b>다음 단계</b>에서 계획을 실행합니다.
+      </p>
+    </div>
+  </div>
+
+  <!-- STEP 10: 산출물 생성 (artifact.plan.md 실행) -->
+  <div class="step" id="step10">
+    <span class="step-tag">Step 10 — 산출물 생성</span>
+    <h1 class="step-title">계획을 실행해요 📦</h1>
+    <p class="step-desc">확정된 artifact.plan.md를 AI가 실행합니다. 계획된 산출물이 의존 순서대로 생성되며, 계획에 없는 것은 만들지 않습니다.</p>
+
+    <div class="complete-action" style="margin:0 0 20px">
+      <button class="btn-action primary" onclick="copyGeneratePrompt(event)">
+        📦 산출물 생성 프롬프트 복사 (blueprint + plan 포함)
+      </button>
+    </div>
+
+    <div style="margin-top:8px;padding:16px;background:#f0efeb;border-radius:var(--radius-sm)">
+      <p style="font-size:13px;font-weight:600;margin-bottom:8px">진행 방법</p>
+      <p style="font-size:13px;color:var(--text-sub);line-height:1.7">
+        1. 위 버튼으로 프롬프트를 복사해 AI 도구에 요청하세요. (Step 8~9의 blueprint와 plan 수정본이 함께 복사됩니다)<br>
+        2. <b>프로젝트 레포 안에서</b> Claude Code 같은 코딩 AI로 실행하면 산출물 파일이 바로 생성됩니다. 웹 챗에서 실행했다면 결과를 각 파일로 저장하세요.<br>
+        3. 실행이 끝나면 AI가 생성/건너뜀/실패 내역을 담은 <b>실행 요약</b>을 보고합니다. 생성된 문서를 팀과 함께 검토하세요.
       </p>
     </div>
   </div>
@@ -894,7 +934,7 @@ textarea {
 </nav>
 
 <script>
-const TOTAL = 9;
+const TOTAL = 10;
 let current = 1;
 const store = {};
 let intakeDirty = false;  // 사용자가 intake 수정본을 직접 편집했는지
@@ -952,6 +992,9 @@ function updateUI() {
   } else if (current === 8) {
     next.textContent = '생성할 문서 결정하기 →';
     next.style.display = '';
+  } else if (current === 9) {
+    next.textContent = '계획 실행하기 →';
+    next.style.display = '';
   } else {
     next.textContent = '다음 단계 →';
     next.style.display = '';
@@ -1002,6 +1045,10 @@ function buildIntake() {
   const git = store['f_git'] || '미정';
   const issue = store['f_issue'] || '미정';
 
+  const aidev = getMulti('f_aidev') || '미정';
+  const constraints = getVal('f_constraints') || '없음';
+
+  // intake.md 템플릿(루트)과 동일한 8섹션 구조 — 폼에서 수집하지 않는 항목은 '미정'
   return `# 프로젝트 정보 (Project Intake)
 
 ## 1. 프로젝트 기본 정보
@@ -1009,35 +1056,48 @@ function buildIntake() {
 - **한 줄 소개**: ${pitch}
 - **서비스 유형**: ${type}
 - **개발 기간**: ${period}
-- **팀 규모**: ${teamsize}
-- **팀 구성**: ${roles}
+- **팀 규모 및 구성**: ${teamsize} (${roles})
 
 ## 2. 문제 & 목표
-- **주요 타겟 사용자**: ${users}
-- **핵심 문제**: ${problem}
-- **사용자가 얻는 핵심 가치**: ${value}
-- **성공 기준 (KPI)**: ${kpi}
+- **해결하려는 핵심 문제**: ${problem}
+- **왜 지금 이 문제를 해결해야 하는가**: 미정
+- **프로젝트의 성공 기준 (KPI / 목표 지표)**: ${kpi}
 
-## 3. 핵심 기능
+## 3. 사용자
+- **주요 타겟 사용자**: ${users}
+- **사용자의 주요 페인포인트**: 미정
+- **사용자가 얻게 되는 핵심 가치**: ${value}
+
+## 4. 핵심 기능
 ${features}
 
-## 4. 기술 스택
+## 5. 기술 스택 (개발)
 - **프론트엔드**: ${fe}
 - **UI 라이브러리**: ${ui}
 - **백엔드**: ${be}
 - **데이터베이스**: ${db}
 - **인프라 / 배포**: ${infra}
-- **AI / 외부 API**: ${ai}
+- **외부 API / 서드파티**: ${ai}
+- **모노레포 여부**: 미정
 
-## 5. 디자인 방향
-- **디자인 무드**: ${design}
-- **주요 디바이스 타겟**: ${device}
+## 6. 디자인 방향
+- **디자인 컨셉 / 무드**: ${design}
 - **레퍼런스 서비스**: ${ref}
+- **브랜드 컬러 (있다면)**: 미정
+- **주요 디바이스 타겟**: ${device}
 
-## 6. 협업 방식
-- **Git 전략**: ${git}
-- **이슈 트래킹**: ${issue}
-- **소통 도구**: ${comm}`;
+## 7. 협업 & 워크플로우
+- **버전 관리 전략**: ${git}
+- **이슈 트래킹 도구**: ${issue}
+- **커뮤니케이션 도구**: ${comm}
+- **배포 전략**: 미정
+- **코드 리뷰 방식**: 미정
+- **개발에 사용할 AI 도구**: ${aidev}
+
+## 8. 제약 사항 & 특이사항
+- **기술적 제약**: 미정
+- **비즈니스 제약**: 미정
+- **기타 공유할 내용**: ${constraints}`;
 }
 
 // ---- Step 7: intake.md 편집 ----
@@ -1135,6 +1195,27 @@ function copyArtifactPlan(event) {
     return;
   }
   copyWithFeedback(content, event.target, '🗂️ artifact.plan.md 복사 (수정본)');
+}
+
+function copyGeneratePrompt(event) {
+  const bp = bpPair.final();
+  const plan = apPair.final();
+  if (!bp || !plan) {
+    const btn = event.target;
+    btn.textContent = !plan ? '먼저 Step 9에서 artifact.plan.md를 준비해주세요' : '먼저 Step 8에서 blueprint를 준비해주세요';
+    setTimeout(() => btn.textContent = '📦 산출물 생성 프롬프트 복사 (blueprint + plan 포함)', 2500);
+    return;
+  }
+  const prompt = `아래 project.blueprint.md와 artifact.plan.md를 기준으로, Project_starter 레포의 capabilities/artifact-generator/capability.md에 따라 artifact.plan.md를 실행해서 계획된 산출물을 생성해줘. 실행이 끝나면 실행 요약을 보고해줘.
+
+## project.blueprint.md
+
+${bp}
+
+## artifact.plan.md
+
+${plan}`;
+  copyWithFeedback(prompt, event.target, '📦 산출물 생성 프롬프트 복사 (blueprint + plan 포함)');
 }
 
 updateUI();
